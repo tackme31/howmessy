@@ -8,6 +8,7 @@ namespace Howmessy.CodeAnalysis.Analyzers
 
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.RegularExpressions;
 
     public static class LinesOfCodeAnalyzer
     {
@@ -31,23 +32,23 @@ namespace Howmessy.CodeAnalysis.Analyzers
 
             var physicalLoc = physical.Length;
             var logicalLoc = logical.Length;
-            if (node is BlockSyntax && ignoreBlockBrackets)
+            if (node is BlockSyntax block && ignoreBlockBrackets)
             {
-                var emptyMethod = physical.Length == 1 && physical[0].Trim() == "{}";
+                var emptyMethod = physical.Length == 1 && block.Statements.Count == 0;
                 if (emptyMethod)
                 {
                     physicalLoc = 0;
                     logicalLoc = 0;
                 }
 
-                var openBracket = physical.Length > 0 && physical[0].Trim() == "{";
+                var openBracket = physical.Length > 1 && physical[0].Trim() == "{";
                 if (openBracket)
                 {
                     physicalLoc--;
                     logicalLoc--;
                 }
 
-                var closeBracket = physical.Length > 0 && physical[physical.Length - 1].Trim() == "}";
+                var closeBracket = physical.Length > 1 && physical[physical.Length - 1].Trim() == "}";
                 if (closeBracket)
                 {
                     physicalLoc--;
