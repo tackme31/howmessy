@@ -147,13 +147,13 @@ namespace Howmessy.CodeLensProvider
             new CodeLensDetailHeaderDescriptor()
             {
                 UniqueName = "Threshold1",
-                DisplayName = "Threshold1",
+                DisplayName = "Threshold 1",
                 Width = 75,
             },
             new CodeLensDetailHeaderDescriptor()
             {
                 UniqueName = "Threshold2",
-                DisplayName = "Threshold2",
+                DisplayName = "Threshold 2",
                 Width = 75,
             },
         };
