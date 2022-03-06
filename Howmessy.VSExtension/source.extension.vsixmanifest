@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="7d202627-f08c-43f7-85aa-e727dfa5d50c" Version="0.0.0.0" Language="en-US" Publisher="Takumi Yamada" />
+        <Identity Id="7d202627-f08c-43f7-85aa-e727dfa5d50c" Version="0.1.0.0" Language="en-US" Publisher="Takumi Yamada" />
         <DisplayName>howmessy</DisplayName>
         <Description xml:space="preserve">Provides a CodeLens to analyze the code metrics of a method.</Description>
         <MoreInfo>https://github.com/tackme31/howmessy</MoreInfo>
