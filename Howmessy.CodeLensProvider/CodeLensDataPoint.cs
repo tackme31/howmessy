@@ -64,7 +64,7 @@ namespace Howmessy.CodeLensProvider
                 var description = color switch
                 {
                     IndicatorColor.Green => $"simple enough ({percentage}%)",
-                    IndicatorColor.Yellow => $"a little complex ({percentage}%)",
+                    IndicatorColor.Yellow => $"mildly complex ({percentage}%)",
                     IndicatorColor.Red => $"complex ({percentage}%)",
                     _ => throw new ArgumentOutOfRangeException(),
                 };
