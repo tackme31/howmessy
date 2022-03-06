@@ -65,7 +65,7 @@ namespace Howmessy.CodeLensProvider
                 {
                     IndicatorColor.Green => $"simple enough ({percentage}%)",
                     IndicatorColor.Yellow => $"mildly complex ({percentage}%)",
-                    IndicatorColor.Red => $"complex ({percentage}%)",
+                    IndicatorColor.Red => $"very complex ({percentage}%)",
                     _ => throw new ArgumentOutOfRangeException(),
                 };
 
@@ -134,27 +134,33 @@ namespace Howmessy.CodeLensProvider
             },
             new CodeLensDetailHeaderDescriptor()
             {
-                UniqueName = "Value",
-                DisplayName = "Value",
-                Width = 50,
-            },
-            new CodeLensDetailHeaderDescriptor()
-            {
                 UniqueName = "Percentage",
                 DisplayName = "Percentage",
                 Width = 75,
             },
             new CodeLensDetailHeaderDescriptor()
             {
+                UniqueName = "Value",
+                DisplayName = "Value",
+                Width = 50,
+            },
+            new CodeLensDetailHeaderDescriptor()
+            {
                 UniqueName = "Threshold1",
-                DisplayName = "Threshold 1",
-                Width = 75,
+                DisplayName = "simple enough",
+                Width = 90,
             },
             new CodeLensDetailHeaderDescriptor()
             {
                 UniqueName = "Threshold2",
-                DisplayName = "Threshold 2",
-                Width = 75,
+                DisplayName = "mildly complex",
+                Width = 90,
+            },
+                        new CodeLensDetailHeaderDescriptor()
+            {
+                UniqueName = "Threshold2",
+                DisplayName = "very complex",
+                Width = 90,
             },
         };
 
@@ -163,9 +169,18 @@ namespace Howmessy.CodeLensProvider
             var options = await GetMetricsOptions(type);
             var percentage = CalculatePercentage(type, options, value);
             var color = DetermineIndicatorColor(type, options, value);
-            var compare = type == MetricsType.MaintainabilityIndex ? ">=" : "<=";
+            var threshold1 = options.Threshold1;
+            var threshold2 = options.Threshold2;
+            var (simple, mildly, very) = type switch
+            {
+                MetricsType.CognitiveComplexity => ($"0 - {threshold1}", $"{threshold1 + 1} - {threshold2}", $"{threshold2 + 1}+"),
+                MetricsType.CyclomaticComplexity => ($"1 - {threshold1}", $"{threshold1 + 1} - {threshold2}", $"{threshold2 + 1}+"),
+                MetricsType.MaintainabilityIndex => ($"100 - {threshold1}", $"{threshold1 - 1} - {threshold2}", $"{threshold2 - 1} - 0"),
+                MetricsType.LinesOfCode => ($"0 - {threshold1}", $"{threshold1 + 1} - {threshold2}", $"{threshold2 + 1}+"),
+                _ => throw new ArgumentOutOfRangeException(),
+            };
 
-            return CreateEntry(color, name, value, percentage, $"{compare} {options.Threshold1}", $"{compare} {options.Threshold2}");
+            return CreateEntry(color, name, value, percentage, simple, mildly, very);
         }
 
         private int CalculatePercentage(MetricsType type, IMetricsOptions options, int value) => type switch
@@ -200,7 +215,7 @@ namespace Howmessy.CodeLensProvider
             }
         }
         
-        private CodeLensDetailEntryDescriptor CreateEntry(IndicatorColor color, string name, int value, int percentage, string threshold1, string threshold2)
+        private CodeLensDetailEntryDescriptor CreateEntry(IndicatorColor color, string name, int value, int percentage, string simple, string mildly, string very)
             => new CodeLensDetailEntryDescriptor
             {
                 Fields = new List<CodeLensDetailEntryField>
@@ -215,19 +230,23 @@ namespace Howmessy.CodeLensProvider
                     },
                     new CodeLensDetailEntryField()
                     {
-                        Text = value.ToString(),
-                    },
-                    new CodeLensDetailEntryField()
-                    {
                         Text = $"{percentage}%",
                     },
                     new CodeLensDetailEntryField()
                     {
-                        Text = threshold1,
+                        Text = value.ToString(),
                     },
                     new CodeLensDetailEntryField()
                     {
-                        Text = threshold2,
+                        Text = simple,
+                    },
+                    new CodeLensDetailEntryField()
+                    {
+                        Text = mildly,
+                    },
+                    new CodeLensDetailEntryField()
+                    {
+                        Text = very,
                     },
                 }
             };

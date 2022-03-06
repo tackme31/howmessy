@@ -15,9 +15,13 @@ You can set the code metrics to be displayed in CodeLens and the thresholds for 
 
 ![demo](./img/threshold-option.png)
 
-## Support
+## Support Versions
 
 - Visual Studio 2022
+
+## TODOs
+
+- [ ] CLI tool
 
 ## Thanks
 
