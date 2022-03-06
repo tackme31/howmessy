@@ -163,27 +163,17 @@ namespace Howmessy.CodeLensProvider
             var options = await GetMetricsOptions(type);
             var percentage = CalculatePercentage(type, options, value);
             var color = DetermineIndicatorColor(type, options, value);
-            var compare = type switch
-            {
-                MetricsType.MaintainabilityIndex => ">=",
-                _ => "<="
-            };
+            var compare = type == MetricsType.MaintainabilityIndex ? ">=" : "<=";
 
-            return CreateEntry(
-                color,
-                name,
-                value,
-                percentage,
-                $"{compare} {options.Threshold1}",
-                $"{compare} {options.Threshold2}");
+            return CreateEntry(color, name, value, percentage, $"{compare} {options.Threshold1}", $"{compare} {options.Threshold2}");
         }
 
         private int CalculatePercentage(MetricsType type, IMetricsOptions options, int value) => type switch
         {
-            MetricsType.CognitiveComplexity => (int)(value / (double)options.Threshold2 * 100),
+            MetricsType.CognitiveComplexity  => (int)(value / (double)options.Threshold2 * 100),
+            MetricsType.LinesOfCode          => (int)(value / (double)options.Threshold2 * 100),
             MetricsType.CyclomaticComplexity => (int)((value - 1) / (double)(options.Threshold2 - 1) * 100),
-            MetricsType.MaintainabilityIndex => (int)((double)(100 - value) / (100 - options.Threshold1) * 100),
-            MetricsType.LinesOfCode => (int)(value / (double)options.Threshold2 * 100),
+            MetricsType.MaintainabilityIndex => (int)((100 - value) / (double)(100 - options.Threshold2) * 100),
             _ => throw new ArgumentOutOfRangeException(),
         };
 

@@ -1,5 +1,5 @@
 # howmessy
-howmessy is a Visual Studio extension to display metrics on CodeLens. The following metrics are supported.
+howmessy is a Visual Studio extension to display code metrics in CodeLens. The following metrics are supported.
 
 - Cognitive Complexity
 - Cyclomatic Complexity
@@ -9,7 +9,7 @@ howmessy is a Visual Studio extension to display metrics on CodeLens. The follow
 ![demo](./img/demo.gif)
 
 ## Options
-You can set the types of metrics to be displayed in CodeLens and the thresholds for each metric in the Options dialog.
+You can set the code metrics to be displayed in CodeLens and the thresholds for each metric in the option.
 
 ![demo](./img/general-option.png)
 
