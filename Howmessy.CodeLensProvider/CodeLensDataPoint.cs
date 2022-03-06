@@ -234,7 +234,7 @@ namespace Howmessy.CodeLensProvider
 
         private ImageId GetImageId(IndicatorColor color) => color switch
         {
-            IndicatorColor.Green => new ImageId(Guid.Parse("a1fa08e5-519b-4810-bdb0-89f586af37e9"), 5),
+            IndicatorColor.Green => new ImageId(Guid.Parse("a1fa08e5-519b-4810-bdb0-89f586af37e9"), 13),
             IndicatorColor.Yellow => new ImageId(Guid.Parse("a1fa08e5-519b-4810-bdb0-89f586af37e9"), 2),
             IndicatorColor.Red => new ImageId(Guid.Parse("a1fa08e5-519b-4810-bdb0-89f586af37e9"), 4),
             _ => throw new ArgumentOutOfRangeException(),
