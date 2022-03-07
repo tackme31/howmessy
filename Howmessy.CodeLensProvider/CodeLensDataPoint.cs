@@ -205,9 +205,9 @@ namespace Howmessy.CodeLensProvider
                         ? ComplexityType.MildlyComplex
                         : ComplexityType.VeryComplex;
                 case MetricsType.MaintainabilityIndex:
-                    return value >= options.Threshold2
+                    return value >= options.Threshold1
                         ? ComplexityType.SimpleEnough
-                        : value >= options.Threshold1
+                        : value >= options.Threshold2
                         ? ComplexityType.MildlyComplex
                         : ComplexityType.VeryComplex;
                 default:
