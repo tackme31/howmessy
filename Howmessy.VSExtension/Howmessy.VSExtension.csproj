@@ -58,10 +58,10 @@
     <Compile Include="CodeLensConnectionHandler.cs" />
     <Compile Include="CodeMetricsProvider.cs" />
     <Compile Include="HowmessyPackage.cs" />
-    <Compile Include="MicroscopeCommands.cs">
+    <Compile Include="HowmessyCommands.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>MicroscopeCommands.vsct</DependentUpon>
+      <DependentUpon>HowmessyCommands.vsct</DependentUpon>
     </Compile>
     <Compile Include="Options\BaseOptionModel.cs" />
     <Compile Include="Options\BaseOptionPage.cs">
@@ -87,6 +87,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Resource Include="Resources\MildlyComplex.16.16.png" />
+    <Resource Include="Resources\SimpleEnough.16.16.png" />
+    <Resource Include="Resources\VeryComplex.16.16.png" />
+    <Content Include="HowmessyMoniker.imagemanifest">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
       <Generator>VsixManifestGenerator</Generator>
@@ -94,10 +100,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <VSCTCompile Include="MicroscopeCommands.vsct">
+    <VSCTCompile Include="HowmessyCommands.vsct">
       <Generator>VsctGenerator</Generator>
       <ResourceName>Menus.ctmenu</ResourceName>
-      <LastGenOutput>MicroscopeCommands.cs</LastGenOutput>
+      <LastGenOutput>HowmessyCommands.cs</LastGenOutput>
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>

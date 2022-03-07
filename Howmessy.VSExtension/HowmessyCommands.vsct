@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<Symbols>
+		<GuidSymbol name="PackageId" value="{b798b46c-201a-470c-9e3e-fa0abb23dfa7}" />
+		<GuidSymbol name="Complexity" value="{f64bd60c-175b-481f-95b7-b126a5ebc53f}">
+			<IDSymbol name="SimpleEnough" value="1" />
+			<IDSymbol name="MildlyComplex" value="2" />
+			<IDSymbol name="VeryComplex" value="3" />
+		</GuidSymbol>
+	</Symbols>
+</CommandTable>

@@ -11,14 +11,14 @@
     public class CognitiveComplexityOptions : BaseOptionModel<CognitiveComplexityOptions>, IMetricsOptions
     {
         [Category("Threshold")]
-        [DisplayName("Threshold 1")]
+        [DisplayName("mildly complex")]
         [Description("Specifies the threshold at which the indicator color changes from green to yellow.")]
         [DefaultValue(10)]
         [JsonProperty]
         public int Threshold1 { get; set; } = 10;
 
         [Category("Threshold")]
-        [DisplayName("Threshold 2")]
+        [DisplayName("very complex")]
         [Description("Specifies the threshold at which the indicator color changes from yellow to red.")]
         [DefaultValue(15)]
         [JsonProperty]

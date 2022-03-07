@@ -36,6 +36,12 @@ namespace Howmessy.CodeAnalysis.Walkers
             _nesting--;
         }
 
+        public override void VisitBreakStatement(BreakStatementSyntax node)
+        {
+            Complexity++;
+            base.VisitBreakStatement(node);
+        }
+
         public override void VisitWhenClause(WhenClauseSyntax node)
         {
             Complexity++;
@@ -54,15 +60,33 @@ namespace Howmessy.CodeAnalysis.Walkers
 
         public override void VisitIfStatement(IfStatementSyntax node)
         {
-            if (node.Else == null)
+            // else if
+            if (node.Parent is ElseClauseSyntax)
             {
+                _nesting--;
+            }
+
+            Complexity += 1 + _nesting;
+            _nesting++;
+
+            base.VisitIfStatement(node);
+
+            _nesting--;
+        }
+
+        public override void VisitElseClause(ElseClauseSyntax node)
+        {
+            // else
+            if (node.Parent is IfStatementSyntax && !(node.Statement is IfStatementSyntax))
+            {
+                _nesting--;
                 Complexity += 1 + _nesting;
                 _nesting++;
             }
 
-            base.VisitIfStatement(node);
+            base.VisitElseClause(node);
 
-            if (node.Else == null)
+            if (node.Parent is IfStatementSyntax && !(node.Statement is IfStatementSyntax))
             {
                 _nesting--;
             }
@@ -90,27 +114,42 @@ namespace Howmessy.CodeAnalysis.Walkers
 
         public override void VisitUsingStatement(UsingStatementSyntax node)
         {
+            if (!(node.Statement is UsingStatementSyntax))
+            {
+                Complexity += 1 + _nesting;
+                _nesting++;
+            }
+
+
+            base.VisitUsingStatement(node);
+
+            if (!(node.Statement is UsingStatementSyntax))
+            {
+                _nesting--;
+            }
+        }
+
+        public override void VisitTryStatement(TryStatementSyntax node)
+        {
             Complexity += 1 + _nesting;
             _nesting++;
 
-            base.VisitUsingStatement(node);
+            base.VisitTryStatement(node);
 
             _nesting--;
         }
 
         public override void VisitCatchClause(CatchClauseSyntax node)
         {
-            Complexity += 1 + _nesting;
-            _nesting++;
+            Complexity += _nesting;
 
             base.VisitCatchClause(node);
-
-            _nesting--;
         }
 
         public override void VisitCatchFilterClause(CatchFilterClauseSyntax node)
         {
             Complexity++;
+
             base.VisitCatchFilterClause(node);
         }
 
@@ -140,15 +179,6 @@ namespace Howmessy.CodeAnalysis.Walkers
             base.VisitInvocationExpression(node);
         }
 
-        public override void VisitInterpolation(InterpolationSyntax node)
-        {
-            _nesting++;
-
-            base.VisitInterpolation(node);
-
-            _nesting--;
-        }
-
         public override void VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node)
         {
             _nesting++;
@@ -156,6 +186,21 @@ namespace Howmessy.CodeAnalysis.Walkers
             base.VisitParenthesizedLambdaExpression(node);
 
             _nesting--;
+        }
+
+        public override void VisitSimpleLambdaExpression(SimpleLambdaExpressionSyntax node)
+        {
+            if (node.Block != null)
+            {
+                _nesting++;
+            }
+
+            base.VisitSimpleLambdaExpression(node);
+
+            if (node.Block != null)
+            {
+                _nesting--;
+            }
         }
 
         public override void VisitConditionalExpression(ConditionalExpressionSyntax node)
