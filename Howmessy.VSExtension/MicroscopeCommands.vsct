@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <Symbols>
-    <GuidSymbol name="PackageId" value="{b798b46c-201a-470c-9e3e-fa0abb23dfa7}" />
-  </Symbols>
-</CommandTable>

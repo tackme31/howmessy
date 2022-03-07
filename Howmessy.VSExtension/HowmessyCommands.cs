@@ -14,12 +14,17 @@ namespace Howmessy.VSExtension
     {
         public const string PackageIdString = "b798b46c-201a-470c-9e3e-fa0abb23dfa7";
         public static Guid PackageId = new Guid(PackageIdString);
+
+        public const string ComplexityString = "f64bd60c-175b-481f-95b7-b126a5ebc53f";
+        public static Guid Complexity = new Guid(ComplexityString);
     }
     /// <summary>
     /// Helper class that encapsulates all CommandIDs uses across VS Package.
     /// </summary>
     internal sealed partial class PackageIds
     {
-
+        public const int SimpleEnough = 0x0001;
+        public const int MildlyComplex = 0x0002;
+        public const int VeryComplex = 0x0003;
     }
 }

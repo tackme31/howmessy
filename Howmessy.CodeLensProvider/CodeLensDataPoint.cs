@@ -16,9 +16,9 @@ namespace Howmessy.CodeLensProvider
 
     using static Howmessy.Shared.Logging;
 
-    enum IndicatorColor
+    enum ComplexityType
     {
-        Green, Yellow, Red
+        SimpleEnough, MildlyComplex, VeryComplex
     }
 
     public class CodeLensDataPoint : IAsyncCodeLensDataPoint, IDisposable
@@ -60,12 +60,12 @@ namespace Howmessy.CodeLensProvider
                 var metrics = data.GetMetrics(type);
 
                 var percentage = CalculatePercentage(type, options, metrics);
-                var color = DetermineIndicatorColor(type, options, metrics);
-                var description = color switch
+                var complexityType = DetermineComplexityType(type, options, metrics);
+                var description = complexityType switch
                 {
-                    IndicatorColor.Green => $"simple enough ({percentage}%)",
-                    IndicatorColor.Yellow => $"mildly complex ({percentage}%)",
-                    IndicatorColor.Red => $"very complex ({percentage}%)",
+                    ComplexityType.SimpleEnough => $"simple enough ({percentage}%)",
+                    ComplexityType.MildlyComplex => $"mildly complex ({percentage}%)",
+                    ComplexityType.VeryComplex => $"very complex ({percentage}%)",
                     _ => throw new ArgumentOutOfRangeException(),
                 };
 
@@ -73,7 +73,7 @@ namespace Howmessy.CodeLensProvider
                 {
                     Description = description,
                     TooltipText = $"See other metrics",
-                    ImageId = GetImageId(color),
+                    ImageId = GetImageId(complexityType),
                 };
             }
             catch (Exception ex)
@@ -168,7 +168,7 @@ namespace Howmessy.CodeLensProvider
         {
             var options = await GetMetricsOptions(type);
             var percentage = CalculatePercentage(type, options, value);
-            var color = DetermineIndicatorColor(type, options, value);
+            var complexityType = DetermineComplexityType(type, options, value);
             var threshold1 = options.Threshold1;
             var threshold2 = options.Threshold2;
             var (simple, mildly, very) = type switch
@@ -180,7 +180,7 @@ namespace Howmessy.CodeLensProvider
                 _ => throw new ArgumentOutOfRangeException(),
             };
 
-            return CreateEntry(color, name, value, percentage, simple, mildly, very);
+            return CreateEntry(complexityType, name, value, percentage, simple, mildly, very);
         }
 
         private int CalculatePercentage(MetricsType type, IMetricsOptions options, int value) => type switch
@@ -192,7 +192,7 @@ namespace Howmessy.CodeLensProvider
             _ => throw new ArgumentOutOfRangeException(),
         };
 
-        private IndicatorColor DetermineIndicatorColor(MetricsType type, IMetricsOptions options, int value)
+        private ComplexityType DetermineComplexityType(MetricsType type, IMetricsOptions options, int value)
         {
             switch (type)
             {
@@ -200,29 +200,29 @@ namespace Howmessy.CodeLensProvider
                 case MetricsType.CyclomaticComplexity:
                 case MetricsType.LinesOfCode:
                     return value <= options.Threshold1
-                        ? IndicatorColor.Green
+                        ? ComplexityType.SimpleEnough
                         : value <= options.Threshold2
-                        ? IndicatorColor.Yellow
-                        : IndicatorColor.Red;
+                        ? ComplexityType.MildlyComplex
+                        : ComplexityType.VeryComplex;
                 case MetricsType.MaintainabilityIndex:
                     return value >= options.Threshold2
-                        ? IndicatorColor.Green
+                        ? ComplexityType.SimpleEnough
                         : value >= options.Threshold1
-                        ? IndicatorColor.Yellow
-                        : IndicatorColor.Red;
+                        ? ComplexityType.MildlyComplex
+                        : ComplexityType.VeryComplex;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
         
-        private CodeLensDetailEntryDescriptor CreateEntry(IndicatorColor color, string name, int value, int percentage, string simple, string mildly, string very)
+        private CodeLensDetailEntryDescriptor CreateEntry(ComplexityType complexityType, string name, int value, int percentage, string simple, string mildly, string very)
             => new CodeLensDetailEntryDescriptor
             {
                 Fields = new List<CodeLensDetailEntryField>
                 {
                     new CodeLensDetailEntryField()
                     {
-                        ImageId = GetImageId(color),
+                        ImageId = GetImageId(complexityType),
                     },
                     new CodeLensDetailEntryField()
                     {
@@ -251,11 +251,11 @@ namespace Howmessy.CodeLensProvider
                 }
             };
 
-        private ImageId GetImageId(IndicatorColor color) => color switch
+        private ImageId GetImageId(ComplexityType complexityType) => complexityType switch
         {
-            IndicatorColor.Green => new ImageId(Guid.Parse("a1fa08e5-519b-4810-bdb0-89f586af37e9"), 13),
-            IndicatorColor.Yellow => new ImageId(Guid.Parse("a1fa08e5-519b-4810-bdb0-89f586af37e9"), 2),
-            IndicatorColor.Red => new ImageId(Guid.Parse("a1fa08e5-519b-4810-bdb0-89f586af37e9"), 4),
+            ComplexityType.SimpleEnough => new ImageId(Guid.Parse("f64bd60c-175b-481f-95b7-b126a5ebc53f"), 1),
+            ComplexityType.MildlyComplex => new ImageId(Guid.Parse("f64bd60c-175b-481f-95b7-b126a5ebc53f"), 2),
+            ComplexityType.VeryComplex => new ImageId(Guid.Parse("f64bd60c-175b-481f-95b7-b126a5ebc53f"), 3),
             _ => throw new ArgumentOutOfRangeException(),
         };
 

@@ -39,3 +39,7 @@ And some code was borrowed from the following repository.
 
 # License
 This software is licensed under the MIT license. See [LICENSE](./LICENSE).
+
+---
+
+<a target="_blank" href="https://icons8.com/icon/frKq3ROpdX3N/border">Border</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
