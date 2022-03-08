@@ -15,7 +15,7 @@
         [Description("Specifies the threshold at which the indicator color changes from green to yellow.")]
         [DefaultValue(10)]
         [JsonProperty]
-        public int Threshold1 { get; set; } = 10;
+        public int Threshold1 { get; set; } = 8;
 
         [Category("Threshold")]
         [DisplayName("very complex")]
