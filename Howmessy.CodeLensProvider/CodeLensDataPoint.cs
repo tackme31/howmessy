@@ -2,6 +2,7 @@
 
 namespace Howmessy.CodeLensProvider
 {
+    using Howmessy.CodeLensProvider.Options;
     using Howmessy.Shared;
 
     using Microsoft.VisualStudio.Core.Imaging;
@@ -56,16 +57,17 @@ namespace Howmessy.CodeLensProvider
                 dataLoaded.Set();
 
                 var generalOptions = await GetGeneralOptions();
-                var metricsOptions = await GetMetricsOptions(generalOptions.CodeLensMetrics);
+                var thresholdOptions = await GetThresholdOptions();
+                var (threshold1, threshold2) = GetThreshold(thresholdOptions, generalOptions.CodeLensMetrics);
                 var metrics = data.GetMetrics(generalOptions.CodeLensMetrics);
                 var indicatorValue = generalOptions.DisplayFormat switch
                 {
                     DisplayFormat.Numeric => metrics.ToString(),
-                    DisplayFormat.Percentage => CalculatePercentage(generalOptions.CodeLensMetrics, metricsOptions, metrics) + "%",
+                    DisplayFormat.Percentage => CalculatePercentage(generalOptions.CodeLensMetrics, threshold2, metrics) + "%",
                     _ => throw new ArgumentOutOfRangeException(),
                 };
-                var complexityType = DetermineComplexityType(generalOptions.CodeLensMetrics, metricsOptions, metrics);
-                var description = complexityType switch
+                var complexityLevel = DetermineComplexityLevel(generalOptions.CodeLensMetrics, threshold1, threshold2, metrics);
+                var description = complexityLevel switch
                 {
                     ComplexityType.SimpleEnough => $"simple enough ({indicatorValue})",
                     ComplexityType.MildlyComplex => $"mildly complex ({indicatorValue})",
@@ -77,7 +79,7 @@ namespace Howmessy.CodeLensProvider
                 {
                     Description = description,
                     TooltipText = $"See other metrics",
-                    ImageId = GetImageId(complexityType),
+                    ImageId = GetImageId(complexityLevel),
                 };
             }
             catch (Exception ex)
@@ -150,19 +152,19 @@ namespace Howmessy.CodeLensProvider
             },
             new CodeLensDetailHeaderDescriptor()
             {
-                UniqueName = "Threshold1",
+                UniqueName = "SimpeEnough",
                 DisplayName = "simple enough",
                 Width = 90,
             },
             new CodeLensDetailHeaderDescriptor()
             {
-                UniqueName = "Threshold2",
+                UniqueName = "MildlyComplex",
                 DisplayName = "mildly complex",
                 Width = 90,
             },
-                        new CodeLensDetailHeaderDescriptor()
+            new CodeLensDetailHeaderDescriptor()
             {
-                UniqueName = "Threshold2",
+                UniqueName = "VeryComplex",
                 DisplayName = "very complex",
                 Width = 90,
             },
@@ -170,11 +172,12 @@ namespace Howmessy.CodeLensProvider
 
         private async Task<CodeLensDetailEntryDescriptor> CreateEntry(MetricsType type, string name, int value)
         {
-            var options = await GetMetricsOptions(type);
-            var percentage = CalculatePercentage(type, options, value);
-            var complexityType = DetermineComplexityType(type, options, value);
-            var threshold1 = options.Threshold1;
-            var threshold2 = options.Threshold2;
+            var options = await GetThresholdOptions();
+            var (threshold1, threshold2) = GetThreshold(options, type);
+            var percentage = CalculatePercentage(type, threshold2, value);
+            var complexityType = DetermineComplexityLevel(type, threshold1, threshold2, value);
+
+
             var (simple, mildly, very) = type switch
             {
                 MetricsType.CognitiveComplexity => ($"0 - {threshold1}", $"{threshold1 + 1} - {threshold2}", $"{threshold2 + 1}+"),
@@ -187,31 +190,40 @@ namespace Howmessy.CodeLensProvider
             return CreateEntry(complexityType, name, percentage, value, simple, mildly, very);
         }
 
-        private int CalculatePercentage(MetricsType type, IMetricsOptions options, int value) => type switch
+        private (int threshold1, int threshold2) GetThreshold(IThresholdOptions options, MetricsType type) => type switch
         {
-            MetricsType.CognitiveComplexity  => (int)(value / (double)options.Threshold2 * 100),
-            MetricsType.LinesOfCode          => (int)(value / (double)options.Threshold2 * 100),
-            MetricsType.CyclomaticComplexity => (int)((value - 1) / (double)(options.Threshold2 - 1) * 100),
-            MetricsType.MaintainabilityIndex => (int)((100 - value) / (double)(100 - options.Threshold2) * 100),
+            MetricsType.CognitiveComplexity => (options.CognitiveComplexityThreshold1, options.CognitiveComplexityThreshold2),
+            MetricsType.CyclomaticComplexity => (options.CyclomaticComplexityThreshold1, options.CyclomaticComplexityThreshold2),
+            MetricsType.MaintainabilityIndex => (options.MaintainabilityIndexThreshold1, options.MaintainabilityIndexThreshold2),
+            MetricsType.LinesOfCode => (options.LinesOfCodeThreshold1, options.LinesOfCodeThreshold2),
+            _ => throw new NotSupportedException(),
+        };
+
+        private int CalculatePercentage(MetricsType type, int threshold2, int value) => type switch
+        {
+            MetricsType.CognitiveComplexity  => (int)(value / (double)threshold2 * 100),
+            MetricsType.LinesOfCode          => (int)(value / (double)threshold2 * 100),
+            MetricsType.CyclomaticComplexity => (int)((value - 1) / (double)(threshold2 - 1) * 100),
+            MetricsType.MaintainabilityIndex => (int)((100 - value) / (double)(100 - threshold2) * 100),
             _ => throw new ArgumentOutOfRangeException(),
         };
 
-        private ComplexityType DetermineComplexityType(MetricsType type, IMetricsOptions options, int value)
+        private ComplexityType DetermineComplexityLevel(MetricsType type, int threshold1, int threshold2, int value)
         {
             switch (type)
             {
                 case MetricsType.CognitiveComplexity:
                 case MetricsType.CyclomaticComplexity:
                 case MetricsType.LinesOfCode:
-                    return value <= options.Threshold1
+                    return value <= threshold1
                         ? ComplexityType.SimpleEnough
-                        : value <= options.Threshold2
+                        : value <= threshold2
                         ? ComplexityType.MildlyComplex
                         : ComplexityType.VeryComplex;
                 case MetricsType.MaintainabilityIndex:
-                    return value >= options.Threshold1
+                    return value >= threshold1
                         ? ComplexityType.SimpleEnough
-                        : value >= options.Threshold2
+                        : value >= threshold2
                         ? ComplexityType.MildlyComplex
                         : ComplexityType.VeryComplex;
                 default:
@@ -288,25 +300,10 @@ namespace Howmessy.CodeLensProvider
                 nameof(ICodeMetricsProvider.GetGeneralOptions)
                 ).Caf();
 
-        private async Task<IMetricsOptions> GetMetricsOptions(MetricsType type)
-            => await callbackService.InvokeAsync<MetricsOptions>(
+        private async Task<IThresholdOptions> GetThresholdOptions()
+            => await callbackService.InvokeAsync<ThresholdOptions>(
                 this,
-                nameof(ICodeMetricsProvider.GetMetricsOptions),
-                new object[] { type }
+                nameof(ICodeMetricsProvider.GetThresholdOptions)
                 ).Caf();
-
-        private class GeneralOptions : IGeneralOptions
-        {
-            public MetricsType CodeLensMetrics { get; set; } = MetricsType.CognitiveComplexity;
-
-            public DisplayFormat DisplayFormat { get; set; } = DisplayFormat.Percentage;
-        }
-
-        private class MetricsOptions : IMetricsOptions
-        {
-            public int Threshold1 { get; set; }
-
-            public int Threshold2 { get; set; }
-        }
     }
 }

@@ -67,12 +67,9 @@
     <Compile Include="Options\BaseOptionPage.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Options\LinesOfCodeOptions.cs" />
-    <Compile Include="Options\MaintainabilityIndexOptions.cs" />
-    <Compile Include="Options\CognitiveComplexityOptions.cs" />
     <Compile Include="Options\DialogPageProvider.cs" />
-    <Compile Include="Options\CyclomaticComplexityOptions.cs" />
     <Compile Include="Options\GeneralOptions.cs" />
+    <Compile Include="Options\ThresholdOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SaveCommandHandler.cs" />
     <Compile Include="source.extension.cs">

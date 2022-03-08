@@ -31,20 +31,9 @@ namespace Howmessy.VSExtension
         [ImportingConstructor]
         public CodeMetricsProvider(VisualStudioWorkspace workspace) => this.workspace = workspace;
 
-        public async Task<IGeneralOptions> GetGeneralOptions()
-        {
-            var options = await GeneralOptions.GetLiveInstanceAsync().Caf();
-            return options;
-        }
+        public async Task<IGeneralOptions> GetGeneralOptions() => await GeneralOptions.GetLiveInstanceAsync().Caf();
 
-        public async Task<IMetricsOptions> GetMetricsOptions(MetricsType type) => type switch
-        {
-            MetricsType.CognitiveComplexity => await CognitiveComplexityOptions.GetLiveInstanceAsync().Caf(),
-            MetricsType.CyclomaticComplexity => await CyclomaticComplexityOptions.GetLiveInstanceAsync().Caf(),
-            MetricsType.MaintainabilityIndex => await MaintainabilityIndexOptions.GetLiveInstanceAsync().Caf(),
-            MetricsType.LinesOfCode => await LinesOfCodeOptions.GetLiveInstanceAsync().Caf(),
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        public async Task<IThresholdOptions> GetThresholdOptions() => await ThresholdOptions.GetLiveInstanceAsync().Caf();
 
         public int GetVisualStudioPid() => Process.GetCurrentProcess().Id;
 

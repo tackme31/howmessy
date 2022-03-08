@@ -2,8 +2,8 @@
 {
     public interface IGeneralOptions
     {
-        MetricsType CodeLensMetrics { get; set; }
+        MetricsType CodeLensMetrics { get; }
 
-        DisplayFormat DisplayFormat { get; set; }
+        DisplayFormat DisplayFormat { get; }
     }
 }

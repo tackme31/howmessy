@@ -45,7 +45,7 @@
     <Compile Include="CodeLensDetails.cs" />
     <Compile Include="DisplayFormat.cs" />
     <Compile Include="IGeneralOptions.cs" />
-    <Compile Include="IMetricsOptions.cs" />
+    <Compile Include="IThresholdOptions.cs" />
     <Compile Include="MetricsType.cs" />
     <Compile Include="RemoteConnection.cs" />
     <Compile Include="ICodeMetricsProvider.cs" />

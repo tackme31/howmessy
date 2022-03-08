@@ -10,7 +10,7 @@ namespace Howmessy.Shared {
 
         Task<IGeneralOptions> GetGeneralOptions();
 
-        Task<IMetricsOptions> GetMetricsOptions(MetricsType type);
+        Task<IThresholdOptions> GetThresholdOptions();
 
         Task<CodeLensData> LoadCodeMetrics(Guid dataPointId, Guid projGuid, string filePath, int textStart, int textLen, CancellationToken ct);
     }

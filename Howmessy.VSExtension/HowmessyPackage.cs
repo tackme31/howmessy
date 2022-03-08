@@ -22,15 +22,9 @@ namespace Howmessy.VSExtension
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideOptionPage(typeof(DialogPageProvider.General), Vsix.Name, "General", 0, 0, true)]
-    [ProvideOptionPage(typeof(DialogPageProvider.CognitiveComplexity), Vsix.Name, "Cognitive Complexity", 0, 0, true)]
-    [ProvideOptionPage(typeof(DialogPageProvider.CyclomaticComplexity), Vsix.Name, "Cyclomatic Complexity", 0, 0, true)]
-    [ProvideOptionPage(typeof(DialogPageProvider.MaintainabilityIndex), Vsix.Name, "Maintainability Index", 0, 0, true)]
-    [ProvideOptionPage(typeof(DialogPageProvider.LinesOfCode), Vsix.Name, "Lines of Code", 0, 0, true)]
+    [ProvideOptionPage(typeof(DialogPageProvider.Threshold), Vsix.Name, "Threshold", 0, 0, true)]
     [ProvideProfile(typeof(DialogPageProvider.General), Vsix.Name, "General", 0, 0, true)]
-    [ProvideProfile(typeof(DialogPageProvider.CognitiveComplexity), Vsix.Name, "Cognitive Complexity", 0, 0, true)]
-    [ProvideProfile(typeof(DialogPageProvider.CyclomaticComplexity), Vsix.Name, "Cyclomatic Complexity", 0, 0, true)]
-    [ProvideProfile(typeof(DialogPageProvider.MaintainabilityIndex), Vsix.Name, "Maintainability Index", 0, 0, true)]
-    [ProvideProfile(typeof(DialogPageProvider.LinesOfCode), Vsix.Name, "Lines of Code", 0, 0, true)]
+    [ProvideProfile(typeof(DialogPageProvider.Threshold), Vsix.Name, "Threshold", 0, 0, true)]
     public sealed class HowmessyPackage : AsyncPackage
     {
         protected override async Task InitializeAsync(CancellationToken ct, IProgress<ServiceProgressData> progress)
@@ -42,10 +36,7 @@ namespace Howmessy.VSExtension
                 _ = CodeLensConnectionHandler.AcceptCodeLensConnections();
 
                 GeneralOptions.Saved += RefreshAllCodeLensDataPoints;
-                CognitiveComplexityOptions.Saved += RefreshAllCodeLensDataPoints;
-                CyclomaticComplexityOptions.Saved += RefreshAllCodeLensDataPoints;
-                MaintainabilityIndexOptions.Saved += RefreshAllCodeLensDataPoints;
-                LinesOfCodeOptions.Saved += RefreshAllCodeLensDataPoints;
+                ThresholdOptions.Saved += RefreshAllCodeLensDataPoints;
             }
             catch (Exception ex)
             {
@@ -57,16 +48,10 @@ namespace Howmessy.VSExtension
         protected override void Dispose(bool disposing)
         {
             GeneralOptions.Saved -= RefreshAllCodeLensDataPoints;
-            CognitiveComplexityOptions.Saved -= RefreshAllCodeLensDataPoints;
-            CyclomaticComplexityOptions.Saved -= RefreshAllCodeLensDataPoints;
-            MaintainabilityIndexOptions.Saved -= RefreshAllCodeLensDataPoints;
-            LinesOfCodeOptions.Saved -= RefreshAllCodeLensDataPoints;
+            ThresholdOptions.Saved -= RefreshAllCodeLensDataPoints;
             base.Dispose(disposing);
         }
 
-        private void RefreshAllCodeLensDataPoints(object sender, EventArgs arg)
-        {
-            _ = CodeLensConnectionHandler.RefreshAllCodeLensDataPoints().Caf();
-        }
+        private void RefreshAllCodeLensDataPoints(object sender, EventArgs arg) => _ = CodeLensConnectionHandler.RefreshAllCodeLensDataPoints().Caf();
     }
 }
