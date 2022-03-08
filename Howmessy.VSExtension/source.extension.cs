@@ -11,7 +11,7 @@ namespace Howmessy.VSExtension
         public const string Name = "howmessy";
         public const string Description = @"Provides a CodeLens to analyze the code metrics of a method.";
         public const string Language = "en-US";
-        public const string Version = "0.2.0.0";
+        public const string Version = "0.2.1.0";
         public const string Author = "Takumi Yamada";
         public const string Tags = "Code Metrics, Cyclomatic Complexity, Cognitive Complexity, Maintainability Index";
     }
