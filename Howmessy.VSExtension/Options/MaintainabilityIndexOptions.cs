@@ -4,7 +4,6 @@
 
     using Newtonsoft.Json;
 
-    using System;
     using System.ComponentModel;
 
     [JsonObject(MemberSerialization.OptIn)]
