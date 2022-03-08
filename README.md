@@ -9,8 +9,6 @@ howmessy is a Visual Studio extension to display code metrics in CodeLens. The f
 ![demo](./img/demo.gif)
 
 ## Options
-You can set the code metrics to be displayed in CodeLens and the thresholds for each metric in the option.
-
 ![demo](./img/general-option.png)
 
 ![demo](./img/threshold-option.png)
@@ -18,10 +16,6 @@ You can set the code metrics to be displayed in CodeLens and the thresholds for 
 ## Support Versions
 
 - Visual Studio 2022
-
-## TODOs
-
-- [ ] CLI tool
 
 ## Thanks
 
