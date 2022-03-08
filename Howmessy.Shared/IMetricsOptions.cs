@@ -6,11 +6,4 @@
 
         int Threshold2 { get; set; }
     }
-
-    public class MetricsOptions : IMetricsOptions
-    {
-        public int Threshold1 { get; set; }
-
-        public int Threshold2 { get; set; }
-    }
 }

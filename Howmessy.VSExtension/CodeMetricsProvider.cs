@@ -31,10 +31,10 @@ namespace Howmessy.VSExtension
         [ImportingConstructor]
         public CodeMetricsProvider(VisualStudioWorkspace workspace) => this.workspace = workspace;
 
-        public async Task<MetricsType> GetCodeLensMetrics()
+        public async Task<IGeneralOptions> GetGeneralOptions()
         {
             var options = await GeneralOptions.GetLiveInstanceAsync().Caf();
-            return options.CodeLensMetrics;
+            return options;
         }
 
         public async Task<IMetricsOptions> GetMetricsOptions(MetricsType type) => type switch

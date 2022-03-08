@@ -8,7 +8,7 @@ namespace Howmessy.Shared {
     public interface ICodeMetricsProvider {
         int GetVisualStudioPid();
 
-        Task<MetricsType> GetCodeLensMetrics();
+        Task<IGeneralOptions> GetGeneralOptions();
 
         Task<IMetricsOptions> GetMetricsOptions(MetricsType type);
 

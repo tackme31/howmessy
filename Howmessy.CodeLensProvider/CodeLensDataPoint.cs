@@ -55,17 +55,21 @@ namespace Howmessy.CodeLensProvider
                 data = await LoadCodeMetrics(context, ct).Caf();
                 dataLoaded.Set();
 
-                var type = await GetCodeLensMetrics();
-                var options = await GetMetricsOptions(type);
-                var metrics = data.GetMetrics(type);
-
-                var percentage = CalculatePercentage(type, options, metrics);
-                var complexityType = DetermineComplexityType(type, options, metrics);
+                var generalOptions = await GetGeneralOptions();
+                var metricsOptions = await GetMetricsOptions(generalOptions.CodeLensMetrics);
+                var metrics = data.GetMetrics(generalOptions.CodeLensMetrics);
+                var indicatorValue = generalOptions.DisplayFormat switch
+                {
+                    DisplayFormat.Numeric => metrics.ToString(),
+                    DisplayFormat.Percentage => CalculatePercentage(generalOptions.CodeLensMetrics, metricsOptions, metrics) + "%",
+                    _ => throw new ArgumentOutOfRangeException(),
+                };
+                var complexityType = DetermineComplexityType(generalOptions.CodeLensMetrics, metricsOptions, metrics);
                 var description = complexityType switch
                 {
-                    ComplexityType.SimpleEnough => $"simple enough ({percentage}%)",
-                    ComplexityType.MildlyComplex => $"mildly complex ({percentage}%)",
-                    ComplexityType.VeryComplex => $"very complex ({percentage}%)",
+                    ComplexityType.SimpleEnough => $"simple enough ({indicatorValue})",
+                    ComplexityType.MildlyComplex => $"mildly complex ({indicatorValue})",
+                    ComplexityType.VeryComplex => $"very complex ({indicatorValue})",
                     _ => throw new ArgumentOutOfRangeException(),
                 };
 
@@ -180,7 +184,7 @@ namespace Howmessy.CodeLensProvider
                 _ => throw new ArgumentOutOfRangeException(),
             };
 
-            return CreateEntry(complexityType, name, value, percentage, simple, mildly, very);
+            return CreateEntry(complexityType, name, percentage, value, simple, mildly, very);
         }
 
         private int CalculatePercentage(MetricsType type, IMetricsOptions options, int value) => type switch
@@ -215,7 +219,7 @@ namespace Howmessy.CodeLensProvider
             }
         }
         
-        private CodeLensDetailEntryDescriptor CreateEntry(ComplexityType complexityType, string name, int value, int percentage, string simple, string mildly, string very)
+        private CodeLensDetailEntryDescriptor CreateEntry(ComplexityType complexityType, string name, int percentage, int value, string simple, string mildly, string very)
             => new CodeLensDetailEntryDescriptor
             {
                 Fields = new List<CodeLensDetailEntryField>
@@ -278,10 +282,10 @@ namespace Howmessy.CodeLensProvider
                     },
                     ct).Caf();
 
-        private async Task<MetricsType> GetCodeLensMetrics()
-            => await callbackService.InvokeAsync<MetricsType>(
+        private async Task<IGeneralOptions> GetGeneralOptions()
+            => await callbackService.InvokeAsync<GeneralOptions>(
                 this,
-                nameof(ICodeMetricsProvider.GetCodeLensMetrics)
+                nameof(ICodeMetricsProvider.GetGeneralOptions)
                 ).Caf();
 
         private async Task<IMetricsOptions> GetMetricsOptions(MetricsType type)
@@ -290,5 +294,19 @@ namespace Howmessy.CodeLensProvider
                 nameof(ICodeMetricsProvider.GetMetricsOptions),
                 new object[] { type }
                 ).Caf();
+
+        private class GeneralOptions : IGeneralOptions
+        {
+            public MetricsType CodeLensMetrics { get; set; } = MetricsType.CognitiveComplexity;
+
+            public DisplayFormat DisplayFormat { get; set; } = DisplayFormat.Percentage;
+        }
+
+        private class MetricsOptions : IMetricsOptions
+        {
+            public int Threshold1 { get; set; }
+
+            public int Threshold2 { get; set; }
+        }
     }
 }
