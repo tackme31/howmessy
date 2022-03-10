@@ -1,8 +1,7 @@
-﻿namespace Howmessy.Shared
+﻿namespace Howmessy.Shared;
+
+public enum DisplayFormat
 {
-    public enum DisplayFormat
-    {
-        Percentage,
-        Numeric,
-    }
+    Percentage,
+    Numeric,
 }

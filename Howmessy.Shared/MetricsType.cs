@@ -1,10 +1,9 @@
-﻿namespace Howmessy.Shared
+﻿namespace Howmessy.Shared;
+
+public enum MetricsType
 {
-    public enum MetricsType
-    {
-        CognitiveComplexity,
-        CyclomaticComplexity,
-        MaintainabilityIndex,
-        LinesOfCode
-    }
+    CognitiveComplexity,
+    CyclomaticComplexity,
+    MaintainabilityIndex,
+    LinesOfCode
 }
