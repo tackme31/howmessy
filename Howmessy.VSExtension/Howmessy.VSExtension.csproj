@@ -148,7 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Howmessy.CodeAnalysis\Howmessy.CodeAnalysis.csproj">
-      <Project>{f98bb94e-cf38-466b-adfd-9bb26d8493b7}</Project>
+      <Project>{285bb0f7-5df3-4e23-96bb-3f1c848df490}</Project>
       <Name>Howmessy.CodeAnalysis</Name>
     </ProjectReference>
     <ProjectReference Include="..\Howmessy.CodeLensProvider\Howmessy.CodeLensProvider.csproj">
@@ -156,7 +156,7 @@
       <Name>Howmessy.CodeLensProvider</Name>
     </ProjectReference>
     <ProjectReference Include="..\Howmessy.Shared\Howmessy.Shared.csproj">
-      <Project>{d6f37eec-cba3-4db2-b44c-5f036c6faa9f}</Project>
+      <Project>{2a6be7b6-e6dd-4ffa-b1de-d0c82d201af9}</Project>
       <Name>Howmessy.Shared</Name>
     </ProjectReference>
   </ItemGroup>
