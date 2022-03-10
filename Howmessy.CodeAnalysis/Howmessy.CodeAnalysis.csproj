@@ -52,7 +52,6 @@
     <Compile Include="Walkers\CyclomaticComplexityWalker.cs" />
     <Compile Include="Walkers\HalsteadMetricsWalker.cs" />
     <Compile Include="Walkers\HalsteadConst.cs" />
-    <Compile Include="WorkspaceExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

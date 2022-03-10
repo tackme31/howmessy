@@ -1,8 +1,6 @@
 ﻿#nullable enable
 
 namespace Howmessy.VSExtension;
-
-using Howmessy.CodeAnalysis;
 using Howmessy.CodeAnalysis.Analyzers;
 using Howmessy.Shared;
 using Howmessy.VSExtension.Options;

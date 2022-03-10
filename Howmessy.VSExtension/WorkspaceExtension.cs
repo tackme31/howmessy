@@ -1,6 +1,6 @@
 ﻿#nullable enable
 
-namespace Howmessy.CodeAnalysis;
+namespace Howmessy.VSExtension;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.LanguageServices;
