@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Howmessy.Shared", "Howmessy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Howmessy.CodeAnalysis", "Howmessy.CodeAnalysis\Howmessy.CodeAnalysis.csproj", "{285BB0F7-5DF3-4E23-96BB-3F1C848DF490}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Howmessy.Cli", "Howmessy.Cli\Howmessy.Cli.csproj", "{CB5AB2A4-5474-4BE2-8B7D-0FB3FB030C65}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +62,14 @@ Global
 		{285BB0F7-5DF3-4E23-96BB-3F1C848DF490}.Release|Any CPU.Build.0 = Release|Any CPU
 		{285BB0F7-5DF3-4E23-96BB-3F1C848DF490}.Release|x86.ActiveCfg = Release|Any CPU
 		{285BB0F7-5DF3-4E23-96BB-3F1C848DF490}.Release|x86.Build.0 = Release|Any CPU
+		{CB5AB2A4-5474-4BE2-8B7D-0FB3FB030C65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB5AB2A4-5474-4BE2-8B7D-0FB3FB030C65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB5AB2A4-5474-4BE2-8B7D-0FB3FB030C65}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CB5AB2A4-5474-4BE2-8B7D-0FB3FB030C65}.Debug|x86.Build.0 = Debug|Any CPU
+		{CB5AB2A4-5474-4BE2-8B7D-0FB3FB030C65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB5AB2A4-5474-4BE2-8B7D-0FB3FB030C65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB5AB2A4-5474-4BE2-8B7D-0FB3FB030C65}.Release|x86.ActiveCfg = Release|Any CPU
+		{CB5AB2A4-5474-4BE2-8B7D-0FB3FB030C65}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
