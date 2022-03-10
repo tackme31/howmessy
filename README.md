@@ -17,6 +17,60 @@ howmessy is a Visual Studio extension to display code metrics in CodeLens. The f
 
 - Visual Studio 2022
 
+## CLI tool
+howmessy provides a CLI tool for calculating metrics.
+
+Usage:
+```sh
+$ howmessy --help
+howmessy 1.0.0
+Copyright (C) 2022 howmessy
+
+  -m, --metrics    Required. Metrics type to analyze (cognitive/cyclomatic/mi/loc).
+
+  -t, --target     Fully qualified ethod name to analyze.
+
+  -f, --format     Output format.
+
+  --help           Display this help screen.
+
+  --version        Display version information.
+
+  path (pos. 0)    Required. File path to analyze.
+```
+
+Sample:
+```sh
+$ cat ./Sample.cs
+namespace HowmessySample
+
+public class Sample
+{
+    public void Main(string input)
+    {
+        if (!string.IsNullOrWhiteSpace(input))
+        {
+            // output
+            Console.WriteLine(input);
+        }
+    }
+}
+
+$ howmessy ./Sample.cs --metrics cognitive,cyclomatic,mi,loc
+[
+  {
+    "Name": "HowmessySample.Sample.Main(string input)",
+    "CognitiveComplexity": 1,
+    "CyclomaticComplexity": 2,
+    "MaintainabilityIndex": 76,
+    "LinesOfCode": {
+      "Physical": 5,
+      "Logical": 4
+    }
+  }
+]
+```
+
 ## Thanks
 
 This software was inspired by the following repository.
