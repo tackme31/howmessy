@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>howmessy</AssemblyName>
+    <FileVersion>0.4.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
