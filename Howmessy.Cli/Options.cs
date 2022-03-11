@@ -12,7 +12,7 @@ public class Options
     [Option('m', "metrics", Required = true, Separator = ',', HelpText = "Metrics type to analyze (cognitive/cyclomatic/mi/loc).")]
     public IEnumerable<Metrics>? Metrics { get; set; }
 
-    [Option('t', "target", HelpText = "Fully qualified ethod name to analyze.")]
+    [Option('t', "target", HelpText = "Fully qualified method name to analyze.")]
     public string? Target { get; set; }
 
     [Option('f', "format", HelpText = "Output format.")]
