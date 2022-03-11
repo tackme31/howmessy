@@ -28,7 +28,7 @@ Copyright (C) 2022 howmessy
 
   -m, --metrics    Required. Metrics type to analyze (cognitive/cyclomatic/mi/loc).
 
-  -t, --target     Fully qualified ethod name to analyze.
+  -t, --target     Fully qualified method name to analyze.
 
   -f, --format     Output format.
 
