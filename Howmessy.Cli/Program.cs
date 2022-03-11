@@ -158,6 +158,8 @@ static string GetMemberName(SyntaxNode? node)
                 : typeParent + "." + type.Identifier.ValueText;
         case NamespaceDeclarationSyntax @namespace:
             return @namespace.Name.ToString();
+        case FileScopedNamespaceDeclarationSyntax fileScopeNamespace:
+            return fileScopeNamespace.Name.ToString();
         default:
             return string.Empty;
     }
@@ -176,6 +178,13 @@ static IEnumerable<BaseMethodDeclarationSyntax> GetMethods(SyntaxNode node)
             break;
         case NamespaceDeclarationSyntax @namespace:
             foreach (var method in @namespace.Members.SelectMany(GetMethods))
+            {
+                yield return method;
+            }
+
+            break;
+        case FileScopedNamespaceDeclarationSyntax fileScopeNamespace:
+            foreach (var method in fileScopeNamespace.Members.SelectMany(GetMethods))
             {
                 yield return method;
             }
