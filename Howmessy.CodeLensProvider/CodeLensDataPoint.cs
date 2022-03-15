@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 using static Howmessy.Shared.Logging;
 
-enum ComplexityType
+enum ComplexityLevel
 {
     SimpleEnough, MildlyComplex, VeryComplex
 }
@@ -59,25 +59,22 @@ public class CodeLensDataPoint : IAsyncCodeLensDataPoint, IDisposable
             var generalOptions = await GetGeneralOptions();
             var thresholdOptions = await GetThresholdOptions();
             var (threshold1, threshold2) = GetThreshold(thresholdOptions, generalOptions.CodeLensMetrics);
-            var metrics = data.GetMetrics(generalOptions.CodeLensMetrics);
-            var indicatorValue = generalOptions.DisplayFormat switch
+
+            var metricValue = data.GetMetricValue(generalOptions.CodeLensMetrics);
+            var percentage = CalculatePercentage(generalOptions.CodeLensMetrics, threshold2, metricValue);
+            var complexityLevel = DetermineComplexityLevel(generalOptions.CodeLensMetrics, threshold1, threshold2, metricValue);
+
+            var message = complexityLevel switch
             {
-                DisplayFormat.Numeric => metrics.ToString(),
-                DisplayFormat.Percentage => CalculatePercentage(generalOptions.CodeLensMetrics, threshold2, metrics) + "%",
-                _ => throw new ArgumentOutOfRangeException(),
-            };
-            var complexityLevel = DetermineComplexityLevel(generalOptions.CodeLensMetrics, threshold1, threshold2, metrics);
-            var description = complexityLevel switch
-            {
-                ComplexityType.SimpleEnough => $"simple enough ({indicatorValue})",
-                ComplexityType.MildlyComplex => $"mildly complex ({indicatorValue})",
-                ComplexityType.VeryComplex => $"very complex ({indicatorValue})",
-                _ => throw new ArgumentOutOfRangeException(),
+                ComplexityLevel.SimpleEnough => generalOptions.SimpleEnoughMessage,
+                ComplexityLevel.MildlyComplex => generalOptions.MildlyComplexMessage,
+                ComplexityLevel.VeryComplex => generalOptions.VeryComplexMessage,
+                _ => throw new InvalidOperationException(),
             };
 
             return new CodeLensDataPointDescriptor
             {
-                Description = description,
+                Description = message.Replace("$PCT$", $"{percentage}%").Replace("$VAL$", $"{metricValue}"),
                 TooltipText = $"See other metrics",
                 ImageId = GetImageId(complexityLevel),
             };
@@ -208,24 +205,24 @@ public class CodeLensDataPoint : IAsyncCodeLensDataPoint, IDisposable
         _ => throw new ArgumentOutOfRangeException(),
     };
 
-    private ComplexityType DetermineComplexityLevel(MetricsType type, int threshold1, int threshold2, int value) => type switch
+    private ComplexityLevel DetermineComplexityLevel(MetricsType type, int threshold1, int threshold2, int value) => type switch
     {
         MetricsType.CognitiveComplexity or MetricsType.CyclomaticComplexity or MetricsType.LinesOfCode
             => value <= threshold1
-            ? ComplexityType.SimpleEnough
+            ? ComplexityLevel.SimpleEnough
             : value <= threshold2
-            ? ComplexityType.MildlyComplex
-            : ComplexityType.VeryComplex,
+            ? ComplexityLevel.MildlyComplex
+            : ComplexityLevel.VeryComplex,
         MetricsType.MaintainabilityIndex
             => value >= threshold1
-            ? ComplexityType.SimpleEnough
+            ? ComplexityLevel.SimpleEnough
             : value >= threshold2
-            ? ComplexityType.MildlyComplex
-            : ComplexityType.VeryComplex,
+            ? ComplexityLevel.MildlyComplex
+            : ComplexityLevel.VeryComplex,
         _ => throw new ArgumentOutOfRangeException(),
     };
 
-    private CodeLensDetailEntryDescriptor CreateEntry(ComplexityType complexityType, string name, int percentage, int value, string simple, string mildly, string very)
+    private CodeLensDetailEntryDescriptor CreateEntry(ComplexityLevel complexityType, string name, int percentage, int value, string simple, string mildly, string very)
         => new()
         {
             Fields = new List<CodeLensDetailEntryField>
@@ -261,11 +258,11 @@ public class CodeLensDataPoint : IAsyncCodeLensDataPoint, IDisposable
             }
         };
 
-    private ImageId GetImageId(ComplexityType complexityType) => complexityType switch
+    private ImageId GetImageId(ComplexityLevel complexityType) => complexityType switch
     {
-        ComplexityType.SimpleEnough => new ImageId(Guid.Parse("f64bd60c-175b-481f-95b7-b126a5ebc53f"), 1),
-        ComplexityType.MildlyComplex => new ImageId(Guid.Parse("f64bd60c-175b-481f-95b7-b126a5ebc53f"), 2),
-        ComplexityType.VeryComplex => new ImageId(Guid.Parse("f64bd60c-175b-481f-95b7-b126a5ebc53f"), 3),
+        ComplexityLevel.SimpleEnough => new ImageId(Guid.Parse("f64bd60c-175b-481f-95b7-b126a5ebc53f"), 1),
+        ComplexityLevel.MildlyComplex => new ImageId(Guid.Parse("f64bd60c-175b-481f-95b7-b126a5ebc53f"), 2),
+        ComplexityLevel.VeryComplex => new ImageId(Guid.Parse("f64bd60c-175b-481f-95b7-b126a5ebc53f"), 3),
         _ => throw new ArgumentOutOfRangeException(),
     };
 

@@ -18,7 +18,7 @@ public class CodeLensData {
 
 public static class CodeLensDataExtension
 {
-    public static int GetMetrics(this CodeLensData data, MetricsType type) => type switch
+    public static int GetMetricValue(this CodeLensData data, MetricsType type) => type switch
     {
         MetricsType.CognitiveComplexity => data.CognitiveComplexity,
         MetricsType.CyclomaticComplexity => data.CyclomaticComplexity,
