@@ -6,6 +6,7 @@ using Howmessy.CodeLensProvider.Options;
 using Howmessy.Shared;
 
 using Microsoft.VisualStudio.Core.Imaging;
+using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Language.CodeLens;
 using Microsoft.VisualStudio.Language.CodeLens.Remoting;
 using Microsoft.VisualStudio.Threading;
@@ -263,9 +264,9 @@ public class CodeLensDataPoint : IAsyncCodeLensDataPoint, IDisposable
 
     private ImageId GetImageId(ComplexityType complexityType) => complexityType switch
     {
-        ComplexityType.SimpleEnough => new ImageId(Guid.Parse("f64bd60c-175b-481f-95b7-b126a5ebc53f"), 1),
-        ComplexityType.MildlyComplex => new ImageId(Guid.Parse("f64bd60c-175b-481f-95b7-b126a5ebc53f"), 2),
-        ComplexityType.VeryComplex => new ImageId(Guid.Parse("f64bd60c-175b-481f-95b7-b126a5ebc53f"), 3),
+        ComplexityType.SimpleEnough => new ImageId(KnownMonikers.OnlineStatusAvailable.Guid, KnownMonikers.OnlineStatusAvailable.Id),
+        ComplexityType.MildlyComplex => new ImageId(KnownMonikers.OnlineStatusAway.Guid, KnownMonikers.OnlineStatusAway.Id),
+        ComplexityType.VeryComplex => new ImageId(KnownMonikers.OnlineStatusBusy.Guid, KnownMonikers.OnlineStatusBusy.Id),
         _ => throw new ArgumentOutOfRangeException(),
     };
 
