@@ -6,7 +6,7 @@ howmessy is a Visual Studio extension to display code metrics in CodeLens. The f
 - Maintainability Index
 - Lines of Code
 
-![demo](./img/demo.gif)
+![demo](./img/screenshot.png)
 
 ## Options
 ![demo](./img/general-option.png)
