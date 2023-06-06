@@ -17,7 +17,7 @@ using static Howmessy.Shared.Logging;
 using Task = System.Threading.Tasks.Task;
 
 [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-[InstalledProductRegistration(Vsix.Name, Vsix.Description, Vsix.Version)]
+[InstalledProductRegistration(Vsix.Name, Vsix.Description, Vsix.Version, IconResourceID = 400)]
 [Guid(PackageGuids.PackageIdString)]
 [ProvideMenuResource("Menus.ctmenu", 1)]
 [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
