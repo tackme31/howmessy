@@ -12,7 +12,7 @@ namespace Howmessy.VSExtension
     /// </summary>
     internal sealed partial class PackageGuids
     {
-        public const string PackageIdString = "b798b46c-201a-470c-9e3e-fa0abb23dfa7";
+        public const string PackageIdString = "9c498b5b-8615-458c-a6b8-0ea269962f3f";
         public static Guid PackageId = new Guid(PackageIdString);
     }
     /// <summary>
