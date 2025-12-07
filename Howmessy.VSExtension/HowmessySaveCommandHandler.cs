@@ -1,8 +1,6 @@
 ﻿#nullable enable
 
-namespace CodeCleanupOnSave;
-
-using Howmessy.VSExtension;
+namespace Howmessy.VSExtension;
 
 using Microsoft.VisualStudio.Commanding;
 using Microsoft.VisualStudio.Shell;
@@ -16,17 +14,24 @@ using System.ComponentModel.Composition;
 using static Howmessy.Shared.Logging;
 
 [Export(typeof(ICommandHandler))]
-[Name(nameof(SaveCommandHandler))]
+[Name(nameof(HowmessySaveCommandHandler))]
 [ContentType("CSharp")]
 [TextViewRole(PredefinedTextViewRoles.PrimaryDocument)]
-public class SaveCommandHandler : ICommandHandler<SaveCommandArgs>
+public class HowmessySaveCommandHandler : ICommandHandler<SaveCommandArgs>
 {
-    public string DisplayName => nameof(SaveCommandHandler);
+    public string DisplayName => nameof(HowmessySaveCommandHandler);
 
     public bool ExecuteCommand(SaveCommandArgs args, CommandExecutionContext ctx)
     {
+        LogCL();
+        LogVS();
+
         try
         {
+            if (args == null)
+            {
+                return false;
+            }
             _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
                 // CodeLenses usually only live as long as the document is open so we just refresh all the connected ones.
                 await CodeLensConnectionHandler.RefreshAllCodeLensDataPoints());
@@ -40,5 +45,10 @@ public class SaveCommandHandler : ICommandHandler<SaveCommandArgs>
         }
     }
 
-    public CommandState GetCommandState(SaveCommandArgs args) => CommandState.Available;
+    public CommandState GetCommandState(SaveCommandArgs args)
+    {
+        LogCL();
+        LogVS();
+        return CommandState.Available;
+    }
 }

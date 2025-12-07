@@ -76,7 +76,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SaveCommandHandler.cs" />
+    <Compile Include="HowmessySaveCommandHandler.cs" />
     <Compile Include="source.extension.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

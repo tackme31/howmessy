@@ -1,0 +1,6 @@
+{
+  "enabledMcpjsonServers": [
+    "serena"
+  ],
+  "enableAllProjectMcpServers": true
+}
