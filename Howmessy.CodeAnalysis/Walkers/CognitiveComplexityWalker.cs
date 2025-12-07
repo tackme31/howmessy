@@ -123,6 +123,15 @@ internal class CognitiveComplexityWalker : CSharpSyntaxWalker
     public override void VisitBinaryExpression(BinaryExpressionSyntax node)
     {
         var nodeKind = node.Kind();
+
+        // Handle 'is' expression (older syntax representation)
+        if (nodeKind is SyntaxKind.IsExpression)
+        {
+            Complexity++;
+            base.VisitBinaryExpression(node);
+            return;
+        }
+
         if (nodeKind is not SyntaxKind.LogicalAndExpression and not SyntaxKind.LogicalOrExpression)
         {
             base.VisitBinaryExpression(node);
@@ -148,6 +157,42 @@ internal class CognitiveComplexityWalker : CSharpSyntaxWalker
         }
 
         base.VisitBinaryExpression(node);
+    }
+
+    public override void VisitIsPatternExpression(IsPatternExpressionSyntax node)
+    {
+        Complexity++;
+        base.VisitIsPatternExpression(node);
+    }
+
+    public override void VisitBinaryPattern(BinaryPatternSyntax node)
+    {
+        var nodeKind = node.Kind();
+        if (nodeKind is not SyntaxKind.AndPattern and not SyntaxKind.OrPattern)
+        {
+            base.VisitBinaryPattern(node);
+            return;
+        }
+
+        if (_ignoreOperations.Contains(node))
+        {
+            base.VisitBinaryPattern(node);
+            return;
+        }
+
+        var left = RemoveParentheses(node.Left);
+        if (!left.IsKind(nodeKind))
+        {
+            Complexity++;
+        }
+
+        var right = RemoveParentheses(node.Right);
+        if (right.IsKind(nodeKind))
+        {
+            _ = _ignoreOperations.Add(right);
+        }
+
+        base.VisitBinaryPattern(node);
     }
 
     private bool IsRecursiveCall(InvocationExpressionSyntax syntax)
