@@ -711,6 +711,329 @@ class Test
         result.Should().Be(4);
     }
 
+    // Pattern Matching (C# 9+)
+    [Fact]
+    public void Analyze_IsPattern_ReturnsOne()
+    {
+        // Arrange - is pattern should add +1
+        var code = @"
+class Test
+{
+    void Method(object obj)
+    {
+        if (obj is string)
+        {
+            Console.WriteLine(""string"");
+        }
+    }
+}";
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetRoot();
+        var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+
+        // Act
+        var result = CognitiveComplexityAnalyzer.Analyze(method);
+
+        // Assert
+        result.Should().Be(2); // if: +1, is: +1
+    }
+
+    [Fact]
+    public void Analyze_AndPattern_ReturnsCorrectComplexity()
+    {
+        // Arrange - and pattern should behave like &&
+        var code = @"
+class Test
+{
+    void Method(object obj)
+    {
+        if (obj is string and { Length: > 0 })
+        {
+            Console.WriteLine(""non-empty string"");
+        }
+    }
+}";
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetRoot();
+        var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+
+        // Act
+        var result = CognitiveComplexityAnalyzer.Analyze(method);
+
+        // Assert
+        result.Should().Be(3); // if: +1, is: +1, and: +1
+    }
+
+    [Fact]
+    public void Analyze_OrPattern_ReturnsCorrectComplexity()
+    {
+        // Arrange - or pattern should behave like ||
+        var code = @"
+class Test
+{
+    void Method(object obj)
+    {
+        if (obj is string or int)
+        {
+            Console.WriteLine(""string or int"");
+        }
+    }
+}";
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetRoot();
+        var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+
+        // Act
+        var result = CognitiveComplexityAnalyzer.Analyze(method);
+
+        // Assert
+        result.Should().Be(3); // if: +1, is: +1, or: +1
+    }
+
+    [Fact]
+    public void Analyze_MultipleAndPatterns_CountsOnlyFirst()
+    {
+        // Arrange - x is > 0 and < 10 and != 5: is: +1, first and: +1, second and: 0 = 3 total with if
+        var code = @"
+class Test
+{
+    void Method(int x)
+    {
+        if (x is > 0 and < 10 and != 5)
+        {
+            Console.WriteLine(""valid"");
+        }
+    }
+}";
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetRoot();
+        var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+
+        // Act
+        var result = CognitiveComplexityAnalyzer.Analyze(method);
+
+        // Assert
+        result.Should().Be(3); // if: +1, is: +1, first and: +1
+    }
+
+    [Fact]
+    public void Analyze_MultipleOrPatterns_CountsOnlyFirst()
+    {
+        // Arrange - obj is string or int or bool: is: +1, first or: +1, second or: 0 = 3 total with if
+        var code = @"
+class Test
+{
+    void Method(object obj)
+    {
+        if (obj is string or int or bool)
+        {
+            Console.WriteLine(""valid type"");
+        }
+    }
+}";
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetRoot();
+        var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+
+        // Act
+        var result = CognitiveComplexityAnalyzer.Analyze(method);
+
+        // Assert
+        result.Should().Be(3); // if: +1, is: +1, first or: +1
+    }
+
+    [Fact]
+    public void Analyze_MixedAndOrPatterns_CountsEachChange()
+    {
+        // Arrange - (string and { Length: > 0 }) or int: is: +1, and: +1, or: +1 = 4 total with if
+        var code = @"
+class Test
+{
+    void Method(object obj)
+    {
+        if (obj is (string and { Length: > 0 }) or int)
+        {
+            Console.WriteLine(""complex pattern"");
+        }
+    }
+}";
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetRoot();
+        var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+
+        // Act
+        var result = CognitiveComplexityAnalyzer.Analyze(method);
+
+        // Assert
+        result.Should().Be(4); // if: +1, is: +1, and: +1, or: +1
+    }
+
+    [Fact]
+    public void Analyze_NestedIsPattern_IncludesNestingPenalty()
+    {
+        // Arrange - outer if: +1, is: +1, inner if with is: +1 (base) + 1 (is) + 1 (nesting) = 5 total
+        var code = @"
+class Test
+{
+    void Method(object obj, object other)
+    {
+        if (obj is string)
+        {
+            if (other is int)
+            {
+                Console.WriteLine(""string and int"");
+            }
+        }
+    }
+}";
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetRoot();
+        var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+
+        // Act
+        var result = CognitiveComplexityAnalyzer.Analyze(method);
+
+        // Assert
+        result.Should().Be(5); // outer if: +1, is: +1, inner if: +1 + 1 (nesting), inner is: +1
+    }
+
+    [Fact]
+    public void Analyze_RelationalPattern_ReturnsCorrectComplexity()
+    {
+        // Arrange - relational pattern x is > 0: if: +1, is: +1 = 2 total
+        var code = @"
+class Test
+{
+    void Method(int x)
+    {
+        if (x is > 0)
+        {
+            Console.WriteLine(""positive"");
+        }
+    }
+}";
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetRoot();
+        var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+
+        // Act
+        var result = CognitiveComplexityAnalyzer.Analyze(method);
+
+        // Assert
+        result.Should().Be(2); // if: +1, is: +1
+    }
+
+    [Fact]
+    public void Analyze_ComplexRelationalPattern_ReturnsCorrectComplexity()
+    {
+        // Arrange - x is > 0 and < 100 or < -100: if: +1, is: +1, and: +1, or: +1 = 4 total
+        var code = @"
+class Test
+{
+    void Method(int x)
+    {
+        if (x is > 0 and < 100 or < -100)
+        {
+            Console.WriteLine(""in range"");
+        }
+    }
+}";
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetRoot();
+        var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+
+        // Act
+        var result = CognitiveComplexityAnalyzer.Analyze(method);
+
+        // Assert
+        result.Should().Be(4); // if: +1, is: +1, and: +1, or: +1
+    }
+
+    [Fact]
+    public void Analyze_ExtendedPropertyPattern_ReturnsCorrectComplexity()
+    {
+        // Arrange - obj is { Prop.Value: > 10 }: if: +1, is: +1 = 2 total
+        var code = @"
+class Inner { public int Value; }
+class Outer { public Inner Prop; }
+class Test
+{
+    void Method(Outer obj)
+    {
+        if (obj is { Prop.Value: > 10 })
+        {
+            Console.WriteLine(""value is large"");
+        }
+    }
+}";
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetRoot();
+        var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+
+        // Act
+        var result = CognitiveComplexityAnalyzer.Analyze(method);
+
+        // Assert
+        result.Should().Be(2); // if: +1, is: +1
+    }
+
+    [Fact]
+    public void Analyze_ExtendedPropertyPatternWithMultipleProperties_ReturnsCorrectComplexity()
+    {
+        // Arrange - multiple property patterns: if: +1, is: +1, and: +1 = 3 total
+        var code = @"
+class Inner { public int Value; public string Name; }
+class Outer { public Inner Prop; }
+class Test
+{
+    void Method(Outer obj)
+    {
+        if (obj is { Prop.Value: > 10 and < 100 })
+        {
+            Console.WriteLine(""value in range"");
+        }
+    }
+}";
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetRoot();
+        var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+
+        // Act
+        var result = CognitiveComplexityAnalyzer.Analyze(method);
+
+        // Assert
+        result.Should().Be(3); // if: +1, is: +1, and: +1
+    }
+
+    [Fact]
+    public void Analyze_NestedRelationalPattern_IncludesNestingPenalty()
+    {
+        // Arrange - relational pattern inside a loop
+        var code = @"
+class Test
+{
+    void Method(int[] numbers)
+    {
+        foreach (var x in numbers)
+        {
+            if (x is > 0 and < 100)
+            {
+                Console.WriteLine(x);
+            }
+        }
+    }
+}";
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetRoot();
+        var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+
+        // Act
+        var result = CognitiveComplexityAnalyzer.Analyze(method);
+
+        // Assert
+        result.Should().Be(5); // foreach: +1, if: +1 (base) + 1 (nesting), is: +1, and: +1
+    }
+
     // Conditional (Ternary) Operator
     [Fact]
     public void Analyze_TernaryOperator_ReturnsOne()
