@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>10.0</LangVersion>
+    <LangVersion>13.0</LangVersion>
     <Company>Takumi Yamada</Company>
     <Authors>Takumi Yamada</Authors>
     <RepositoryUrl>https://github.com/tackme31/howmessy</RepositoryUrl>

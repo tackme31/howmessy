@@ -1,10 +1,11 @@
 ﻿#nullable enable
 
-namespace Howmessy.Shared; 
+namespace Howmessy.Shared;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-public static class ConfigureAwaitAlias {
+public static class ConfigureAwaitAlias
+{
     /// <summary>Alias for `ConfigureAwait(false)`.</summary>
     public static ConfiguredTaskAwaitable Caf(this Task t) => t.ConfigureAwait(false);
 

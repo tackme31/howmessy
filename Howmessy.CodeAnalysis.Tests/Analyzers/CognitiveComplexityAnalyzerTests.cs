@@ -1,8 +1,8 @@
-using Howmessy.CodeAnalysis.Analyzers;
+﻿using System.Linq;
 using FluentAssertions;
+using Howmessy.CodeAnalysis.Analyzers;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Linq;
 using Xunit;
 
 namespace Howmessy.CodeAnalysis.Tests.Analyzers;

@@ -1,19 +1,15 @@
-﻿using CommandLine;
-
-using Howmessy.Cli;
-using Howmessy.CodeAnalysis.Analyzers;
-
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-using Newtonsoft.Json;
-
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
+using CommandLine;
+using Howmessy.Cli;
+using Howmessy.CodeAnalysis.Analyzers;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Newtonsoft.Json;
 
 Parser.Default.ParseArguments<Options>(args).WithParsed(Process);
 
@@ -90,7 +86,8 @@ static object AnalyzeMethod(BaseMethodDeclarationSyntax method, Metrics metrics)
     {
         case Metrics.cognitive:
         {
-            return CognitiveComplexityAnalyzer.Analyze(method); ;
+            return CognitiveComplexityAnalyzer.Analyze(method);
+            ;
         }
         case Metrics.cyclomatic:
         {

@@ -1,11 +1,12 @@
 ﻿#nullable enable
 
-namespace Howmessy.Shared; 
+namespace Howmessy.Shared;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-public interface ICodeMetricsProvider {
+public interface ICodeMetricsProvider
+{
     int GetVisualStudioPid();
 
     Task<IGeneralOptions> GetGeneralOptions();

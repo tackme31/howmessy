@@ -1,23 +1,20 @@
 ﻿#nullable enable
 
 namespace Howmessy.VSExtension;
-using Howmessy.CodeAnalysis.Analyzers;
-using Howmessy.Shared;
-using Howmessy.VSExtension.Options;
-
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.VisualStudio.Language.CodeLens;
-using Microsoft.VisualStudio.LanguageServices;
-using Microsoft.VisualStudio.Utilities;
-
 using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Howmessy.CodeAnalysis.Analyzers;
+using Howmessy.Shared;
+using Howmessy.VSExtension.Options;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.VisualStudio.Language.CodeLens;
+using Microsoft.VisualStudio.LanguageServices;
+using Microsoft.VisualStudio.Utilities;
 using static Howmessy.Shared.Logging;
 
 [Export(typeof(ICodeLensCallbackListener))]
@@ -46,7 +43,7 @@ public class CodeMetricsProvider : ICodeLensCallbackListener, ICodeMetricsProvid
         try
         {
             var document = workspace.GetDocument(filePath, projGuid);
-            var method = await GetMethod(document, textStart, textLen);
+            var method = await GetMethodAsync(document, textStart, textLen);
 
             var cyclomaticComplexity = CyclomaticComplexityAnalyzer.Analyze(method);
             var cognitiveComplexity = CognitiveComplexityAnalyzer.Analyze(method);
@@ -71,7 +68,7 @@ public class CodeMetricsProvider : ICodeLensCallbackListener, ICodeMetricsProvid
         }
     }
 
-    private async Task<BaseMethodDeclarationSyntax?> GetMethod(Document document, int textStart, int textLen)
+    private async Task<BaseMethodDeclarationSyntax?> GetMethodAsync(Document document, int textStart, int textLen)
     {
         var root = await document.GetSyntaxRootAsync();
         return root?.DescendantNodes()

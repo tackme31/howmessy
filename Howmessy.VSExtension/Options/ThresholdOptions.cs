@@ -1,10 +1,8 @@
 ﻿namespace Howmessy.VSExtension.Options;
 
-using Howmessy.Shared;
-
-using Newtonsoft.Json;
-
 using System.ComponentModel;
+using Howmessy.Shared;
+using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class ThresholdOptions : BaseOptionModel<ThresholdOptions>, IThresholdOptions

@@ -2,15 +2,13 @@
 
 namespace Howmessy.VSExtension;
 
+using System;
+using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Commanding;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.Commanding.Commands;
 using Microsoft.VisualStudio.Utilities;
-
-using System;
-using System.ComponentModel.Composition;
-
 using static Howmessy.Shared.Logging;
 
 [Export(typeof(ICommandHandler))]
@@ -34,7 +32,7 @@ public class HowmessySaveCommandHandler : ICommandHandler<SaveCommandArgs>
             }
             _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
                 // CodeLenses usually only live as long as the document is open so we just refresh all the connected ones.
-                await CodeLensConnectionHandler.RefreshAllCodeLensDataPoints());
+                await CodeLensConnectionHandler.RefreshAllCodeLensDataPointsAsync());
 
             return true;
         }

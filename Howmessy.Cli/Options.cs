@@ -1,8 +1,7 @@
 ﻿namespace Howmessy.Cli;
-using CommandLine;
-
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using CommandLine;
 
 public class Options
 {

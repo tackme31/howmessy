@@ -2,13 +2,11 @@
 
 namespace Howmessy.CodeAnalysis.Walkers;
 
-using Howmessy.CodeAnalysis.Models;
-
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-
 using System.Collections.Generic;
 using System.Linq;
+using Howmessy.CodeAnalysis.Models;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
 internal class HalsteadMetricsWalker : CSharpSyntaxWalker
 {
@@ -16,7 +14,7 @@ internal class HalsteadMetricsWalker : CSharpSyntaxWalker
 
     public HalsteadMetricsWalker() : base(SyntaxWalkerDepth.Node) => Metrics = new HalsteadMetrics(0, 0, 0, 0);
 
-		public override void Visit(SyntaxNode? node)
+    public override void Visit(SyntaxNode? node)
     {
         if (node == null)
         {

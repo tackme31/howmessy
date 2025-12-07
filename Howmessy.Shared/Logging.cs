@@ -1,6 +1,6 @@
 ﻿#nullable enable
 
-namespace Howmessy.Shared; 
+namespace Howmessy.Shared;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -34,8 +34,10 @@ public static class Logging
         string logFile,
         string callingFile,
         string callingMethod,
-        object? data = null) {
-        lock (@lock) {
+        object? data = null)
+    {
+        lock (@lock)
+        {
             File.AppendAllText(
                 logFile,
                 $"{DateTime.Now:HH:mm:ss.fff} "

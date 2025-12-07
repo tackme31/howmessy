@@ -2,18 +2,15 @@
 
 namespace Howmessy.CodeLensProvider;
 
-using Howmessy.Shared;
-
-using Microsoft.VisualStudio.Language.CodeLens;
-using Microsoft.VisualStudio.Language.CodeLens.Remoting;
-using Microsoft.VisualStudio.Language.Intellisense;
-using Microsoft.VisualStudio.Utilities;
-
 using System;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Howmessy.Shared;
+using Microsoft.VisualStudio.Language.CodeLens;
+using Microsoft.VisualStudio.Language.CodeLens.Remoting;
+using Microsoft.VisualStudio.Language.Intellisense;
+using Microsoft.VisualStudio.Utilities;
 using static Howmessy.Shared.Logging;
 
 [Export(typeof(IAsyncCodeLensDataPointProvider))]
@@ -48,7 +45,7 @@ public class CodeLensProvider : IAsyncCodeLensDataPointProvider
         {
             var dp = new CodeLensDataPoint(callbackService.Value, descriptor);
             var vspid = await callbackService.Value.InvokeAsync<int>(this, nameof(ICodeMetricsProvider.GetVisualStudioPid)).Caf();
-            await dp.ConnectToVisualStudio(vspid).Caf();
+            await dp.ConnectToVisualStudioAsync(vspid).Caf();
 
             return dp;
         }

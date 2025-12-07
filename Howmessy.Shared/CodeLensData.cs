@@ -1,7 +1,8 @@
 ﻿#nullable enable
 
-namespace Howmessy.Shared; 
-public class CodeLensData {
+namespace Howmessy.Shared;
+public class CodeLensData
+{
     public int CyclomaticComplexity { get; set; }
     public int CognitiveComplexity { get; set; }
     public (int Physical, int Logical) LinesOfCode { get; set; }

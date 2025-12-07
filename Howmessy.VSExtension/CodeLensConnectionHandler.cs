@@ -2,18 +2,14 @@
 
 namespace Howmessy.VSExtension;
 
-using Howmessy.Shared;
-
-using StreamJsonRpc;
-
 using System;
 using System.Diagnostics;
 using System.IO.Pipes;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Howmessy.Shared;
+using StreamJsonRpc;
 using static Howmessy.Shared.Logging;
-
 using CodeLensConnections = System.Collections.Concurrent.ConcurrentDictionary<System.Guid, CodeLensConnectionHandler>;
 
 public class CodeLensConnectionHandler : IRemoteVisualStudio, IDisposable
@@ -23,7 +19,7 @@ public class CodeLensConnectionHandler : IRemoteVisualStudio, IDisposable
     private JsonRpc? rpc;
     private Guid? dataPointId;
 
-    public static async Task AcceptCodeLensConnections()
+    public static async Task AcceptCodeLensConnectionsAsync()
     {
         try
         {
@@ -36,7 +32,7 @@ public class CodeLensConnectionHandler : IRemoteVisualStudio, IDisposable
                     PipeTransmissionMode.Byte,
                     PipeOptions.Asynchronous);
                 await stream.WaitForConnectionAsync().Caf();
-                _ = HandleConnection(stream);
+                _ = HandleConnectionAsync(stream);
             }
         }
         catch (Exception ex)
@@ -45,7 +41,7 @@ public class CodeLensConnectionHandler : IRemoteVisualStudio, IDisposable
             throw;
         }
 
-        static async Task HandleConnection(NamedPipeServerStream stream)
+        static async Task HandleConnectionAsync(NamedPipeServerStream stream)
         {
             try
             {
@@ -78,7 +74,7 @@ public class CodeLensConnectionHandler : IRemoteVisualStudio, IDisposable
         connections[id] = this;
     }
 
-    public static async Task RefreshCodeLensDataPoint(Guid id)
+    public static async Task RefreshCodeLensDataPointAsync(Guid id)
     {
         if (!connections.TryGetValue(id, out var conn))
             throw new InvalidOperationException($"CodeLens data point {id} was not registered.");
@@ -87,6 +83,6 @@ public class CodeLensConnectionHandler : IRemoteVisualStudio, IDisposable
         await conn.rpc!.InvokeAsync(nameof(IRemoteCodeLens.Refresh)).Caf();
     }
 
-    public static async Task RefreshAllCodeLensDataPoints()
-        => await Task.WhenAll(connections.Keys.Select(RefreshCodeLensDataPoint)).Caf();
+    public static async Task RefreshAllCodeLensDataPointsAsync()
+        => await Task.WhenAll(connections.Keys.Select(RefreshCodeLensDataPointAsync)).Caf();
 }

@@ -2,11 +2,9 @@
 
 namespace Howmessy.CodeAnalysis.Analyzers;
 
-using Howmessy.CodeAnalysis.Walkers;
-
-using Microsoft.CodeAnalysis;
-
 using System;
+using Howmessy.CodeAnalysis.Walkers;
+using Microsoft.CodeAnalysis;
 
 public static class MaintainabilityIndexAnalyzer
 {

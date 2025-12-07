@@ -2,20 +2,17 @@
 
 namespace Howmessy.CodeLensProvider;
 
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Howmessy.CodeLensProvider.Options;
 using Howmessy.Shared;
-
 using Microsoft.VisualStudio.Core.Imaging;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Language.CodeLens;
 using Microsoft.VisualStudio.Language.CodeLens.Remoting;
 using Microsoft.VisualStudio.Threading;
-
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-
 using static Howmessy.Shared.Logging;
 
 enum ComplexityType
@@ -47,18 +44,18 @@ public class CodeLensDataPoint : IAsyncCodeLensDataPoint, IDisposable
         dataLoaded.Dispose();
     }
 
-    public async Task ConnectToVisualStudio(int vspid) =>
-        visualStudioConnection = await VisualStudioConnectionHandler.Create(owner: this, vspid).Caf();
+    public async Task ConnectToVisualStudioAsync(int vspid) =>
+        visualStudioConnection = await VisualStudioConnectionHandler.CreateAsync(owner: this, vspid).Caf();
 
     public async Task<CodeLensDataPointDescriptor> GetDataAsync(CodeLensDescriptorContext context, CancellationToken ct)
     {
         try
         {
-            data = await LoadCodeMetrics(context, ct).Caf();
+            data = await LoadCodeMetricsAsync(context, ct).Caf();
             dataLoaded.Set();
 
-            var generalOptions = await GetGeneralOptions();
-            var thresholdOptions = await GetThresholdOptions();
+            var generalOptions = await GetGeneralOptionsAsync();
+            var thresholdOptions = await GetThresholdOptionsAsync();
             var (threshold1, threshold2) = GetThreshold(thresholdOptions, generalOptions.CodeLensMetrics);
             var metrics = data.GetMetrics(generalOptions.CodeLensMetrics);
             var indicatorValue = generalOptions.DisplayFormat switch
@@ -98,7 +95,7 @@ public class CodeLensDataPoint : IAsyncCodeLensDataPoint, IDisposable
             // then call `GetDataAsync()` and `GetDetailsAsync()` concurrently.
             if (!dataLoaded.Wait(timeout: TimeSpan.FromSeconds(.5), ct))
             {
-                data = await LoadCodeMetrics(context, ct).Caf();
+                data = await LoadCodeMetricsAsync(context, ct).Caf();
             }
 
             if (data!.IsFailure)
@@ -117,10 +114,10 @@ public class CodeLensDataPoint : IAsyncCodeLensDataPoint, IDisposable
             Headers = CreateHeaders(),
             Entries = new List<CodeLensDetailEntryDescriptor>
             {
-                await CreateEntry(MetricsType.CognitiveComplexity, "Cognitive Complexity", data.CognitiveComplexity),
-                await CreateEntry(MetricsType.CyclomaticComplexity, "Cyclomatic Complexity", data.CyclomaticComplexity),
-                await CreateEntry(MetricsType.MaintainabilityIndex, "Maintainability Index", (int)data.MaintainabilityIndex),
-                await CreateEntry(MetricsType.LinesOfCode, "Lines of Code", data.LinesOfCode.Logical),
+                await CreateEntryAsync(MetricsType.CognitiveComplexity, "Cognitive Complexity", data.CognitiveComplexity),
+                await CreateEntryAsync(MetricsType.CyclomaticComplexity, "Cyclomatic Complexity", data.CyclomaticComplexity),
+                await CreateEntryAsync(MetricsType.MaintainabilityIndex, "Maintainability Index", (int)data.MaintainabilityIndex),
+                await CreateEntryAsync(MetricsType.LinesOfCode, "Lines of Code", data.LinesOfCode.Logical),
             },
         };
     }
@@ -171,9 +168,9 @@ public class CodeLensDataPoint : IAsyncCodeLensDataPoint, IDisposable
         },
     };
 
-    private async Task<CodeLensDetailEntryDescriptor> CreateEntry(MetricsType type, string name, int value)
+    private async Task<CodeLensDetailEntryDescriptor> CreateEntryAsync(MetricsType type, string name, int value)
     {
-        var options = await GetThresholdOptions();
+        var options = await GetThresholdOptionsAsync();
         var (threshold1, threshold2) = GetThreshold(options, type);
         var percentage = CalculatePercentage(type, threshold2, value);
         var complexityType = DetermineComplexityLevel(type, threshold1, threshold2, value);
@@ -202,8 +199,8 @@ public class CodeLensDataPoint : IAsyncCodeLensDataPoint, IDisposable
 
     private int CalculatePercentage(MetricsType type, int threshold2, int value) => type switch
     {
-        MetricsType.CognitiveComplexity  => (int)(value / (double)threshold2 * 100),
-        MetricsType.LinesOfCode          => (int)(value / (double)threshold2 * 100),
+        MetricsType.CognitiveComplexity => (int)(value / (double)threshold2 * 100),
+        MetricsType.LinesOfCode => (int)(value / (double)threshold2 * 100),
         MetricsType.CyclomaticComplexity => (int)((value - 1) / (double)(threshold2 - 1) * 100),
         MetricsType.MaintainabilityIndex => (int)((100 - value) / (double)(100 - threshold2) * 100),
         _ => throw new ArgumentOutOfRangeException(),
@@ -273,7 +270,7 @@ public class CodeLensDataPoint : IAsyncCodeLensDataPoint, IDisposable
     // Called from VS via JSON RPC.
     public void Refresh() => InvalidatedAsync?.InvokeAsync(this, EventArgs.Empty);
 
-    private async Task<CodeLensData> LoadCodeMetrics(CodeLensDescriptorContext ctx, CancellationToken ct)
+    private async Task<CodeLensData> LoadCodeMetricsAsync(CodeLensDescriptorContext ctx, CancellationToken ct)
         => await callbackService
             .InvokeAsync<CodeLensData>(
                 this,
@@ -289,13 +286,13 @@ public class CodeLensDataPoint : IAsyncCodeLensDataPoint, IDisposable
                 },
                 ct).Caf();
 
-    private async Task<IGeneralOptions> GetGeneralOptions()
+    private async Task<IGeneralOptions> GetGeneralOptionsAsync()
         => await callbackService.InvokeAsync<GeneralOptions>(
             this,
             nameof(ICodeMetricsProvider.GetGeneralOptions)
             ).Caf();
 
-    private async Task<IThresholdOptions> GetThresholdOptions()
+    private async Task<IThresholdOptions> GetThresholdOptionsAsync()
         => await callbackService.InvokeAsync<ThresholdOptions>(
             this,
             nameof(ICodeMetricsProvider.GetThresholdOptions)

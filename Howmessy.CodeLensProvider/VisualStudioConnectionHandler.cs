@@ -2,13 +2,11 @@
 
 namespace Howmessy.CodeLensProvider;
 
-using Howmessy.Shared;
-
-using StreamJsonRpc;
-
 using System;
 using System.IO.Pipes;
 using System.Threading.Tasks;
+using Howmessy.Shared;
+using StreamJsonRpc;
 
 public class VisualStudioConnectionHandler : IRemoteCodeLens, IDisposable
 {
@@ -16,10 +14,10 @@ public class VisualStudioConnectionHandler : IRemoteCodeLens, IDisposable
     private readonly NamedPipeClientStream stream;
     private JsonRpc? rpc;
 
-    public async static Task<VisualStudioConnectionHandler> Create(CodeLensDataPoint owner, int vspid)
+    public async static Task<VisualStudioConnectionHandler> CreateAsync(CodeLensDataPoint owner, int vspid)
     {
         var handler = new VisualStudioConnectionHandler(owner, vspid);
-        await handler.Connect().Caf();
+        await handler.ConnectAsync().Caf();
         return handler;
     }
 
@@ -35,7 +33,7 @@ public class VisualStudioConnectionHandler : IRemoteCodeLens, IDisposable
 
     public void Dispose() => stream.Dispose();
 
-    public async Task Connect()
+    public async Task ConnectAsync()
     {
         await stream.ConnectAsync().Caf();
         rpc = JsonRpc.Attach(stream, this);

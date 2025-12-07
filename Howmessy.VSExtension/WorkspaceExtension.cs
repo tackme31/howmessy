@@ -2,13 +2,12 @@
 
 namespace Howmessy.VSExtension;
 
-using Microsoft.CodeAnalysis;
-using Microsoft.VisualStudio.LanguageServices;
-
 using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using Microsoft.CodeAnalysis;
+using Microsoft.VisualStudio.LanguageServices;
 
 public static class WorkspaceExtension
 {

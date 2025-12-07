@@ -2,18 +2,14 @@
 
 namespace Howmessy.VSExtension;
 
-using Howmessy.Shared;
-using Howmessy.VSExtension.Options;
-
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
-
+using Howmessy.Shared;
+using Howmessy.VSExtension.Options;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using static Howmessy.Shared.Logging;
-
 using Task = System.Threading.Tasks.Task;
 
 [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
@@ -33,7 +29,7 @@ public sealed class HowmessyPackage : AsyncPackage
         {
             await base.InitializeAsync(ct, progress);
             await JoinableTaskFactory.SwitchToMainThreadAsync(ct);
-            _ = CodeLensConnectionHandler.AcceptCodeLensConnections();
+            _ = CodeLensConnectionHandler.AcceptCodeLensConnectionsAsync();
 
             GeneralOptions.Saved += RefreshAllCodeLensDataPoints;
             ThresholdOptions.Saved += RefreshAllCodeLensDataPoints;
@@ -52,5 +48,5 @@ public sealed class HowmessyPackage : AsyncPackage
         base.Dispose(disposing);
     }
 
-    private void RefreshAllCodeLensDataPoints(object sender, EventArgs arg) => _ = CodeLensConnectionHandler.RefreshAllCodeLensDataPoints().Caf();
+    private void RefreshAllCodeLensDataPoints(object sender, EventArgs arg) => _ = CodeLensConnectionHandler.RefreshAllCodeLensDataPointsAsync().Caf();
 }
